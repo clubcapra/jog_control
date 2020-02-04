@@ -16,7 +16,8 @@ find_package(catkin REQUIRED COMPONENTS
   rviz
 )
 
-find_package(Boost REQUIRED system filesystem date_time thread)
+find_package(Boost REQUIRED system filesystem date_time thread )
+find_package(Armadillo REQUIRED)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -37,6 +38,7 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${ARMADILLO_INCLUDE_DIRS}
 )
 
 if(rviz_QT_VERSION VERSION_LESS "5")
@@ -82,6 +84,9 @@ target_link_libraries(jog_frame_node ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 add_executable(jog_joint_node src/jog_joint_node.cpp)
 target_link_libraries(jog_joint_node ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
+add_executable(twist_to_jog_frame src/twist_to_jog_frame.cpp)
+target_link_libraries(twist_to_jog_frame ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${ARMADILLO_LIBRARIES})
 
 install(TARGETS jog_frame_node jog_joint_node
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

@@ -18,12 +18,24 @@ class twist_to_jog_frame:
     # Analyze a Twist_msg and return only the dominant axis
     def dominantAxisMode(self, twist_msg):
         axes = {twist_msg.linear.x, twist_msg.linear.y, twist_msg.linear.z, twist_msg.angular.x, twist_msg.angular.y, twist_msg.angular.z}
+        rospy.loginfo("input twist to list: %s", str(axes))
         axes = self.hasDuplicate(axes)
-        for axis in axes:
-            abs(axis)
-        highest = axes.index(max(axes))
-
+        rospy.loginfo("hasDuplicate twist: %s", str(axes))
+        axes_cp = axes
+        for axis in axes_cp:
+            axis = abs(axis)
+        highest = axes.index(max(axes_cp))
+        rospy.loginfo("highest value of twist is at index %i", highest)
+        
         dominantTwist = Twist()
+        # initialize
+        dominantTwist.linear.x = 0
+        dominantTwist.linear.y = 0
+        dominantTwist.linear.z = 0
+        dominantTwist.angular.x = 0
+        dominantTwist.angular.y = 0
+        dominantTwist.angular.z = 0
+
         # Add the dominant value to the dominant axis
         if highest == 0:
             dominantTwist.linear.x = twist_msg.linear.x
@@ -38,6 +50,8 @@ class twist_to_jog_frame:
         elif highest == 5:
             dominantTwist.angular.z = twist_msg.angular.z
 
+        tmp = {dominantTwist.linear.x, dominantTwist.linear.y, dominantTwist.linear.z, dominantTwist.angular.x, dominantTwist.angular.y, dominantTwist.angular.z}
+        rospy.loginfo("dominant twist: %s", str(tmp))
         return dominantTwist
 
     def axesRemap(self, twist_msg):

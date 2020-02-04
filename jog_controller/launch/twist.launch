@@ -4,6 +4,9 @@
   <arg name="link_name" default="tool0"/>
   <arg name="frame_id" default="tool0"/>
   <arg name="sub_topic" default="spacenav/twist"/>
+  <arg name="rotate_axes" default="true"/>
+  <arg name="dominant_axis_mode" default="true"/>
+  <arg name="controller_enabled" default="true"/>
   <arg name="launch_spacenav" default="true"/>
 
   <group if="$(arg launch_spacenav)">
@@ -17,6 +20,9 @@
     <param name="link_name" value="$(arg link_name)"/>
     <param name="frame_id" value="$(arg frame_id)"/>
     <param name="sub_topic" value="$(arg sub_topic)"/>
+    <param name="rotate_axes" value="$(arg rotate_axes)"/>
+    <param name="dominant_axis_mode" value="$(arg dominant_axis_mode)"/>
+    <param name="controller_enabled" value="$(arg controller_enabled)"/>
   </node>
 
 </launch>
