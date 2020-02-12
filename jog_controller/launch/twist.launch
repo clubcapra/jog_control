@@ -3,17 +3,18 @@
   <arg name="group_name" default="manipulator"/>
   <arg name="link_name" default="tool0"/>
   <arg name="frame_id" default="tool0"/>
+  <arg name="launch_spacenav" default="true"/>
   <arg name="sub_topic" default="spacenav/twist"/>
   <arg name="rotate_axes" default="true"/>
   <arg name="dominant_axis_mode" default="true"/>
   <arg name="controller_enabled" default="true"/>
-  <arg name="launch_spacenav" default="true"/>
 
   <group if="$(arg launch_spacenav)">
-    <include file="$(find spacenav_node)/launch/classic.launch"/>
+    <include file="$(find spacenav_node)/launch/classic.launch">
+    </include>
   </group>
   
-  <node name="twist_to_jog_frame" pkg="jog_controller" type="twist_to_jog_frame.py">
+  <node name="twist_to_jog_frame" pkg="jog_controller" type="twist_to_jog_frame" output="screen">
     <rosparam command="load"
 	      file="$(find jog_controller)/config/$(arg joy_config).config.yaml"/>
     <param name="group_name" value="$(arg group_name)"/>

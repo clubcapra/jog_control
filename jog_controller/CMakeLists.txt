@@ -52,7 +52,7 @@ add_definitions(-DQT_NO_KEYWORDS -g)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 set(HEADER_FILES
-  src/jog_frame_panel.h src/jog_joint_panel.h src/jog_slider.h
+  src/jog_frame_panel.h src/jog_joint_panel.h src/jog_slider.h src/twist_to_jog_frame.h
 )
 
 if(rviz_QT_VERSION VERSION_LESS "5")
@@ -88,13 +88,13 @@ target_link_libraries(jog_joint_node ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_executable(twist_to_jog_frame src/twist_to_jog_frame.cpp)
 target_link_libraries(twist_to_jog_frame ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${ARMADILLO_LIBRARIES})
 
-install(TARGETS jog_frame_node jog_joint_node
+install(TARGETS jog_frame_node jog_joint_node twist_to_jog_frame
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-install(PROGRAMS script/joy_to_jog_frame.py script/joy_to_jog_joint.py script/twist_to_jog_frame.py
+install(PROGRAMS script/joy_to_jog_frame.py script/joy_to_jog_joint.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 install(FILES plugin_description.xml
