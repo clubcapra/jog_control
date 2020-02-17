@@ -4,7 +4,7 @@
 
 #include <std_msgs/Bool.h>
 #include <std_msgs/String.h>
-#include "twist_to_jog_frame.h"
+#include <jog_controller/twist_to_jog_frame.h>
 #include "jog_msgs/JogFrame.h"
 
 namespace jog_controller
@@ -12,24 +12,24 @@ namespace jog_controller
 
 TwistToJogFrame::TwistToJogFrame()
 {
-  ros::NodeHandle nh;
+  ros::NodeHandle nh, pnh("~");
   jog_frame_pub_ = nh.advertise<jog_msgs::JogFrame>("jog_frame", 1);
   // set_target_frame_srv_ = nh.advertiseService("set_target_frame", setTargetFrame);
-  // set_target_link_srv_ = nh.advertiseService("set_target_link", setTargetLink);
-  nh.getParam("/jog_frame_node/group_names", group_names_);
-  nh.getParam("/jog_frame_node/link_names", link_names_);
-  nh.getParam("group_name", group_name_);
-  nh.getParam("link_name", link_name_);
-  nh.getParam("frame_id", frame_id_);
-  nh.getParam("rotate_axes", rotate_axes_);
+  // set_target_link_srv_ = nh.advertiseService("set_target_link", &TwistToJogFrame::setTargetLink, this);
+  pnh.getParam("/jog_frame_node/group_names", group_names_);
+  pnh.getParam("/jog_frame_node/link_names", link_names_);
+  pnh.getParam("group_name", group_name_);
+  pnh.getParam("link_name", link_name_);
+  pnh.getParam("frame_id", frame_id_);
+  pnh.getParam("rotate_axes", rotate_axes_);
   std::string str_rotation_matrix_;
-  nh.getParam("rotation_matrix", str_rotation_matrix_); 
+  pnh.getParam("rotation_matrix", str_rotation_matrix_); 
   rotation_matrix_ = arma::mat(str_rotation_matrix_);
-  nh.getParam("dominant_axis_mode", dominant_axis_mode_);
-  nh.getParam("scale_linear", scale_linear_);
-  nh.getParam("scale_angular", scale_angular_);
-  nh.getParam("sub_topic", sub_topic_);
-  nh.getParam("controller_enabled", controller_enabled_);
+  pnh.getParam("dominant_axis_mode", dominant_axis_mode_);
+  pnh.getParam("scale_linear", scale_linear_);
+  pnh.getParam("scale_angular", scale_angular_);
+  pnh.getParam("sub_topic", sub_topic_);
+  pnh.getParam("controller_enabled", controller_enabled_);
   twist_sub_ = nh.subscribe(sub_topic_, 10, &TwistToJogFrame::twist_cb, this);
   ros::topic::waitForMessage<geometry_msgs::Twist>(sub_topic_);
 }
@@ -67,8 +67,9 @@ void TwistToJogFrame::rotateAxes(arma::vec6 &twist_p)
 
 bool TwistToJogFrame::hasDuplicate(const arma::vec6 &twist_p)
 {
-  arma::vec tmp = arma::unique(twist_p);
-  return size(tmp) != size(twist_p);
+  arma::vec nz_tmp = arma::nonzeros(twist_p);
+  arma::vec unique_tmp = arma::unique(nz_tmp);
+  return size(unique_tmp) != size(nz_tmp);
 }
 
 void TwistToJogFrame::scaleCommand(arma::vec6 &twist_p)
@@ -92,7 +93,7 @@ void TwistToJogFrame::twist_cb(const geometry_msgs::TwistConstPtr &twist)
   msg.header.stamp = ros::Time::now();
   msg.header.frame_id = frame_id_;
   msg.group_name = group_name_;
-  msg.link_name = target_link_id_;
+  msg.link_name = link_name_;
 
   arma::vec6 v_twist = arma::vec6({twist->linear.x, twist->linear.y, twist->linear.z, twist->angular.x, twist->angular.y, twist->angular.z});
 
@@ -141,7 +142,7 @@ bool TwistToJogFrame::setTargetFrame(std_msgs::String &frame)
 
 bool TwistToJogFrame::setTargetLink(std_msgs::String &link)
 {
-  target_link_id_ = link.data;
+  link_name_ = link.data;
   return true;
 }
 
