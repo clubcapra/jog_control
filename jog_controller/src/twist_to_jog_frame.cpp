@@ -55,11 +55,8 @@ void TwistToJogFrame::rotateAxes(arma::vec6 &twist_p)
   arma::vec linear = arma::vec3({twist_p.at(0), twist_p.at(1), twist_p.at(2)});
   arma::vec angular = arma::vec3({twist_p.at(3), twist_p.at(4), twist_p.at(5)});
 
-  //error: dot(): objects must have the same number of elements
-  //terminate called after throwing an instance of 'std::logic_error'
-  //what():  dot(): objects must have the same number of elements
-  linear = arma::dot(rotation_matrix_, linear);
-  angular = arma::dot(rotation_matrix_, angular);
+  linear = rotation_matrix_ * linear;
+  angular = rotation_matrix_ * angular;
 
   //Write in original vector
   for(arma::uword i = 0; i < 3; i++){ 
@@ -125,6 +122,14 @@ void TwistToJogFrame::twist_cb(const geometry_msgs::TwistConstPtr &twist)
     // Publish only if at least one of the commands is different from zero.
     if(arma::any(v_twist))
     {
+      //Adding linear and angular values to the msg.
+      msg.linear_delta.x = v_twist.at(0);
+      msg.linear_delta.y = v_twist.at(1);
+      msg.linear_delta.z = v_twist.at(2);
+      msg.angular_delta.x = v_twist.at(3);
+      msg.angular_delta.y = v_twist.at(4);
+      msg.angular_delta.z = v_twist.at(5);
+
       jog_frame_pub_.publish(msg);
     }
   }  
