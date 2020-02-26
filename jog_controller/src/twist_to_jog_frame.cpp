@@ -55,8 +55,11 @@ void TwistToJogFrame::rotateAxes(arma::vec6 &twist_p)
   arma::vec linear = arma::vec3({twist_p.at(0), twist_p.at(1), twist_p.at(2)});
   arma::vec angular = arma::vec3({twist_p.at(3), twist_p.at(4), twist_p.at(5)});
 
-  linear = arma::affmul(rotation_matrix_, linear);
-  angular = arma::affmul(rotation_matrix_, angular);
+  //error: dot(): objects must have the same number of elements
+  //terminate called after throwing an instance of 'std::logic_error'
+  //what():  dot(): objects must have the same number of elements
+  linear = arma::dot(rotation_matrix_, linear);
+  angular = arma::dot(rotation_matrix_, angular);
 
   //Write in original vector
   for(arma::uword i = 0; i < 3; i++){ 
@@ -127,24 +130,24 @@ void TwistToJogFrame::twist_cb(const geometry_msgs::TwistConstPtr &twist)
   }  
   }  
 
-//callback for controller_enable service
-bool TwistToJogFrame::setControllerStatus(std_msgs::Bool &status)
-{
-  controller_enabled_ = status.data;
-  return true;
-}
+// //callback for controller_enable service
+// bool TwistToJogFrame::setControllerStatus(std_msgs::Bool &status)
+// {
+//   controller_enabled_ = status.data;
+//   return true;
+// }
 
-bool TwistToJogFrame::setTargetFrame(std_msgs::String &frame)
-{
-  frame_id_ = frame.data;
-  return true;
-}
+// bool TwistToJogFrame::setTargetFrame(std_msgs::String &frame)
+// {
+//   frame_id_ = frame.data;
+//   return true;
+// }
 
-bool TwistToJogFrame::setTargetLink(std_msgs::String &link)
-{
-  link_name_ = link.data;
-  return true;
-}
+// bool TwistToJogFrame::setTargetLink(std_msgs::String &link)
+// {
+//   link_name_ = link.data;
+//   return true;
+// }
 
 }  // namespace jog_controller
 
