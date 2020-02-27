@@ -2,4 +2,7 @@ scale_linear: 0.005
 scale_angular: 0.005
 
 rotation_matrix:
-  "0, -1, 0; 0, 0, -1; 1, 0, 0"
+  # Linux spacenav_node
+  "0, 0, -1; 0, 1, 0; 1, 0, 0"
+  # Web UI
+  # "0, -1, 0; 0, 0, -1; 1, 0, 0" 

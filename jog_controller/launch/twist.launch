@@ -15,8 +15,7 @@
   </group>
   
   <node name="twist_to_jog_frame" pkg="jog_controller" type="twist_to_jog_frame" output="screen">
-    <rosparam command="load"
-	      file="$(find jog_controller)/config/$(arg joy_config).config.yaml"/>
+    <rosparam command="load" file="$(find jog_controller)/config/$(arg joy_config).config.yaml"/>
     <param name="group_name" value="$(arg group_name)"/>
     <param name="link_name" value="$(arg link_name)"/>
     <param name="frame_id" value="$(arg frame_id)"/>
