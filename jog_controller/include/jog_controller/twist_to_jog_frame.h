@@ -18,23 +18,16 @@ class TwistToJogFrame
     TwistToJogFrame();
     void twist_cb(const geometry_msgs::TwistConstPtr &twist);
     bool setControllerStatus(std_msgs::Bool &status);
+    // std::vector<std::string> getTargetFrames();
     bool setTargetFrame(std_msgs::String &frame);
     bool setTargetLink(std_msgs::String &link);
 
   protected:
-    std::vector<std::string> group_names_;
-    std::vector<std::string> link_names_;
-    std::string group_name_;
-    std::string link_name_;
-    std::string frame_id_;
-    // std::string target_link_id_;
-    std::string sub_topic_;
-    double scale_linear_;
-    double scale_angular_;
+    std::vector<std::string> group_names_, link_names_;
+    std::string group_name_, link_name_, frame_id_, sub_topic_;
+    double scale_linear_, scale_angular_;
     boost::mutex mutex_;
-    bool rotate_axes_;
-    bool dominant_axis_mode_;
-    bool controller_enabled_;
+    bool rotate_axes_, dominant_axis_mode_, controller_enabled_;
     arma::mat rotation_matrix_;
 
     void keepOnlyDominantAxis(arma::vec6 &twist_p);
