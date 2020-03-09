@@ -9,6 +9,9 @@
 #include <std_msgs/String.h>
 #include <string>
 #include "jog_msgs/JogFrame.h"
+#include "jog_msgs/ControllerStatus.h"
+#include "jog_msgs/GetTargetList.h"
+#include "jog_msgs/SetTarget.h"
 
 namespace jog_controller
 {
@@ -17,10 +20,10 @@ class TwistToJogFrame
   public:
     TwistToJogFrame();
     void twist_cb(const geometry_msgs::TwistConstPtr &twist);
-    bool setControllerStatus(std_msgs::Bool &status);
-    // std::vector<std::string> getTargetFrames();
-    bool setTargetFrame(std_msgs::String &frame);
-    bool setTargetLink(std_msgs::String &link);
+    bool getTargetFrameList(jog_msgs::GetTargetListRequest &req, jog_msgs::GetTargetListResponse &res);
+    bool setControllerStatus(jog_msgs::ControllerStatusRequest &req);
+    bool setTargetFrame(jog_msgs::SetTargetRequest &target_frame);
+    bool setTargetLink(jog_msgs::SetTargetRequest &target_link);
 
   protected:
     std::vector<std::string> group_names_, link_names_;
@@ -37,8 +40,10 @@ class TwistToJogFrame
     
     ros::Subscriber twist_sub_;
     ros::Publisher jog_frame_pub_;
-    ros::ServiceServer set_target_frame_srv_;
-    ros::ServiceServer set_target_link_srv_;
+    ros::ServiceServer get_target_frame_list_srv_;
+    ros::ServiceServer set_controller_status_srv_;
+    // ros::ServiceServer set_target_frame_srv_;
+    // ros::ServiceServer set_target_link_srv_;
   };
 
 }  // namespace jog_controller

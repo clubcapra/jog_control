@@ -2,10 +2,13 @@
 #include <boost/thread.hpp>
 #include <armadillo>
 
-#include <std_msgs/Bool.h>
-#include <std_msgs/String.h>
+// #include <std_msgs/Bool.h>
+// #include <std_msgs/String.h>
 #include <jog_controller/twist_to_jog_frame.h>
 #include "jog_msgs/JogFrame.h"
+#include "jog_msgs/ControllerStatus.h"
+#include "jog_msgs/GetTargetList.h"
+#include "jog_msgs/SetTarget.h"
 
 namespace jog_controller
 {
@@ -14,7 +17,7 @@ TwistToJogFrame::TwistToJogFrame()
 {
   ros::NodeHandle nh, pnh("~");
   jog_frame_pub_ = nh.advertise<jog_msgs::JogFrame>("jog_frame", 1);
-  // set_target_frame_srv_ = nh.advertiseService("set_target_frame", setTargetFrame);
+  // set_target_frame_srv_ = nh.advertiseService("set_target_frame", &TwistToJogFrame::setTargetFrame);
   // set_target_link_srv_ = nh.advertiseService("set_target_link", &TwistToJogFrame::setTargetLink, this);
   pnh.getParam("/jog_frame_node/group_names", group_names_);
   pnh.getParam("/jog_frame_node/link_names", link_names_);
@@ -135,24 +138,29 @@ void TwistToJogFrame::twist_cb(const geometry_msgs::TwistConstPtr &twist)
   }  
   }  
 
+bool TwistToJogFrame::getTargetFrameList(jog_msgs::GetTargetListRequest &req, jog_msgs::GetTargetListResponse &res){
+  res.target = link_names_;
+  return true;
+}
+
 // //callback for controller_enable service
-// bool TwistToJogFrame::setControllerStatus(std_msgs::Bool &status)
-// {
-//   controller_enabled_ = status.data;
-//   return true;
-// }
+bool TwistToJogFrame::setControllerStatus(jog_msgs::ControllerStatusRequest &req)
+{
+  controller_enabled_ = req.status;
+  return true;
+}
 
-// bool TwistToJogFrame::setTargetFrame(std_msgs::String &frame)
-// {
-//   frame_id_ = frame.data;
-//   return true;
-// }
+bool TwistToJogFrame::setTargetFrame(jog_msgs::SetTargetRequest &target_frame)
+{
+  frame_id_ = target_frame.name;
+  return true;
+}
 
-// bool TwistToJogFrame::setTargetLink(std_msgs::String &link)
-// {
-//   link_name_ = link.data;
-//   return true;
-// }
+bool TwistToJogFrame::setTargetLink(jog_msgs::SetTargetRequest &target_link)
+{
+  link_name_ = target_link.name;
+  return true;
+}
 
 }  // namespace jog_controller
 
@@ -162,7 +170,10 @@ void TwistToJogFrame::twist_cb(const geometry_msgs::TwistConstPtr &twist)
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "twist_to_jog_frame");
+  // ros::NodeHandle nh;
   jog_controller::TwistToJogFrame node;
+
+  // ros::ServiceServer set_target_frame_srv = nh.advertiseService("set_target_frame", &jog_controller::TwistToJogFrame::setTargetFrame, &node);
 
   ros::Rate loop_rate(10);
   while ( ros::ok() )
