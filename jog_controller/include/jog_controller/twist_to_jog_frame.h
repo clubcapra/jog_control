@@ -5,9 +5,9 @@
 #include <boost/thread.hpp>
 #include <armadillo>
 #include <geometry_msgs/Twist.h>
-#include <std_msgs/Bool.h>
-#include <std_msgs/String.h>
 #include <string>
+
+//Includes specific to this package
 #include "jog_msgs/JogFrame.h"
 #include "jog_msgs/ControllerStatus.h"
 #include "jog_msgs/GetTargetList.h"

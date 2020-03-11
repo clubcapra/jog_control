@@ -1,9 +1,10 @@
 #include <ros/ros.h>
 #include <boost/thread.hpp>
 #include <armadillo>
+#include <geometry_msgs/Twist.h>
+#include <string>
 
-// #include <std_msgs/Bool.h>
-// #include <std_msgs/String.h>
+//Includes specific to this package
 #include <jog_controller/twist_to_jog_frame.h>
 #include "jog_msgs/JogFrame.h"
 #include "jog_msgs/ControllerStatus.h"
@@ -173,10 +174,7 @@ bool TwistToJogFrame::setTargetLink(jog_msgs::SetTargetRequest &target_link, jog
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "twist_to_jog_frame");
-  // ros::NodeHandle nh;
   jog_controller::TwistToJogFrame node;
-
-  // ros::ServiceServer set_target_frame_srv = nh.advertiseService("set_target_frame", &jog_controller::TwistToJogFrame::setTargetFrame, &node);
 
   ros::Rate loop_rate(10);
   while ( ros::ok() )
