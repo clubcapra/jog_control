@@ -17,8 +17,10 @@ TwistToJogFrame::TwistToJogFrame()
 {
   ros::NodeHandle nh, pnh("~");
   jog_frame_pub_ = nh.advertise<jog_msgs::JogFrame>("jog_frame", 1);
-  // set_target_frame_srv_ = nh.advertiseService("set_target_frame", &TwistToJogFrame::setTargetFrame);
-  // set_target_link_srv_ = nh.advertiseService("set_target_link", &TwistToJogFrame::setTargetLink, this);
+  get_target_frame_list_srv_ = nh.advertiseService("get_target_frame_list", &TwistToJogFrame::getTargetFrameList, this);
+  set_controller_status_srv_ = nh.advertiseService("set_controller_status", &TwistToJogFrame::setControllerStatus, this);
+  set_target_frame_srv_ = nh.advertiseService("set_target_frame", &TwistToJogFrame::setTargetFrame, this);
+  set_target_link_srv_ = nh.advertiseService("set_target_link", &TwistToJogFrame::setTargetLink, this);
   pnh.getParam("/jog_frame_node/group_names", group_names_);
   pnh.getParam("/jog_frame_node/link_names", link_names_);
   pnh.getParam("group_name", group_name_);
@@ -138,25 +140,26 @@ void TwistToJogFrame::twist_cb(const geometry_msgs::TwistConstPtr &twist)
   }  
   }  
 
-bool TwistToJogFrame::getTargetFrameList(jog_msgs::GetTargetListRequest &req, jog_msgs::GetTargetListResponse &res){
+bool TwistToJogFrame::getTargetFrameList(jog_msgs::GetTargetListRequest &req, jog_msgs::GetTargetListResponse &res)
+{
   res.target = link_names_;
   return true;
 }
 
 // //callback for controller_enable service
-bool TwistToJogFrame::setControllerStatus(jog_msgs::ControllerStatusRequest &req)
+bool TwistToJogFrame::setControllerStatus(jog_msgs::ControllerStatusRequest &req, jog_msgs::ControllerStatusResponse &res)
 {
   controller_enabled_ = req.status;
   return true;
 }
 
-bool TwistToJogFrame::setTargetFrame(jog_msgs::SetTargetRequest &target_frame)
+bool TwistToJogFrame::setTargetFrame(jog_msgs::SetTargetRequest &target_frame, jog_msgs::SetTargetResponse &res)
 {
   frame_id_ = target_frame.name;
   return true;
 }
 
-bool TwistToJogFrame::setTargetLink(jog_msgs::SetTargetRequest &target_link)
+bool TwistToJogFrame::setTargetLink(jog_msgs::SetTargetRequest &target_link, jog_msgs::SetTargetResponse &res)
 {
   link_name_ = target_link.name;
   return true;
