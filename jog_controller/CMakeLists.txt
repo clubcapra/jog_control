@@ -74,6 +74,7 @@ if(rviz_QT_VERSION VERSION_LESS "5")
 else()
   target_link_libraries(jog_controller Qt5::Widgets ${catkin_LIBRARIES} ${rviz_DEFAULT_PLUGIN_LIBRARIES})
 endif()
+add_dependencies(jog_controller jog_msgs_gencpp)
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   set_target_properties(jog_controller PROPERTIES LINK_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -z defs")
@@ -81,12 +82,15 @@ endif()
 
 add_executable(jog_frame_node src/jog_frame_node.cpp)
 target_link_libraries(jog_frame_node ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+add_dependencies(jog_frame_node jog_msgs_gencpp)
 
 add_executable(jog_joint_node src/jog_joint_node.cpp)
 target_link_libraries(jog_joint_node ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+add_dependencies(jog_joint_node jog_msgs_gencpp)
 
 add_executable(twist_to_jog_frame src/twist_to_jog_frame.cpp)
 target_link_libraries(twist_to_jog_frame ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${ARMADILLO_LIBRARIES})
+add_dependencies(twist_to_jog_frame jog_msgs_gencpp)
 
 install(TARGETS jog_frame_node jog_joint_node twist_to_jog_frame
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
