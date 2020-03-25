@@ -18,10 +18,10 @@ TwistToJogFrame::TwistToJogFrame()
 {
   ros::NodeHandle nh, pnh("~");
   jog_frame_pub_ = nh.advertise<jog_msgs::JogFrame>("jog_frame", 1);
-  get_target_frame_list_srv_ = nh.advertiseService("get_target_frame_list", &TwistToJogFrame::getTargetFrameList, this);
-  set_controller_status_srv_ = nh.advertiseService("set_controller_status", &TwistToJogFrame::setControllerStatus, this);
-  set_target_frame_srv_ = nh.advertiseService("set_target_frame", &TwistToJogFrame::setTargetFrame, this);
-  set_target_link_srv_ = nh.advertiseService("set_target_link", &TwistToJogFrame::setTargetLink, this);
+  get_target_frame_list_srv_ = nh.advertiseService("/twist_to_jog_frame/get_target_frame_list", &TwistToJogFrame::getTargetFrameList, this);
+  set_controller_status_srv_ = nh.advertiseService("/twist_to_jog_frame/set_controller_status", &TwistToJogFrame::setControllerStatus, this);
+  set_target_frame_srv_ = nh.advertiseService("/twist_to_jog_frame/set_target_frame", &TwistToJogFrame::setTargetFrame, this);
+  set_target_link_srv_ = nh.advertiseService("/twist_to_jog_frame/set_target_link", &TwistToJogFrame::setTargetLink, this);
   pnh.getParam("/jog_frame_node/group_names", group_names_);
   pnh.getParam("/jog_frame_node/link_names", link_names_);
   pnh.getParam("group_name", group_name_);
