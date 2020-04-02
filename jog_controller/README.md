@@ -1,4 +1,4 @@
-# jog_controller
+># jog_controller
 
 This package contains controller nodes for jog control. For now, it
 has two indivisual nodes, 'jog_joint_node' and 'frame_joint_node'.
@@ -85,7 +85,7 @@ jog_controller. Let me show you the setting using 'tra1' robot as a
 example in the following description. You can install tra1 package as:
 
 ```
-$ apt install ros-knetic-tra1-bringup
+$ apt install ros-kinetic-tra1-bringup
 ```
 
 ### Create your own package
@@ -320,7 +320,7 @@ and check your sticks produce desired message.
 ### SpaceMouse
 
 `twist.launch` is the launch file to bringup spacenav_node
-and the converter node (twist_to_jog_frame.py). This launch file has the
+and the converter node (TwistToJogFrame.cpp). This launch file has the
 following arguments.
 
 - `joy_config` (default: spacemouse_twist)
@@ -331,10 +331,11 @@ following arguments.
   | Argument | Default | Details|
   |----------|---------|--------|
   | `scale_linear` | 0.005 | This is the linear speed multiplier |
-  | `scale_angular` | 0.05| This is the angular speed multiplier |
-  | `dominant_mode` | True | When the dominant mode is enabled, only the biggest absolute value is kept. |
-  | `axes_remap` | True | Enable if a rotation matrix is required. |
+  | `scale_angular` | 0.005| This is the angular speed multiplier |
+  | `dominant_axis_mode` | True | When the dominant mode is enabled, only the biggest absolute value is kept. |
+  | `rotate_axes` | True | Enable if a rotation matrix is required. |
   | `rotation_matrix` | | The rotation matrix required to transform the space mouse input from it's coordinate system to the target coordinate system. |
+  | `controller_enabled` | True |
 
 - `group_name` (default: manipulator)
 
@@ -346,10 +347,14 @@ following arguments.
   This is the link_name to jog. You need to specify a valid frame name
   in the group.
   
-- `frame_id`
+- `frame_id` (default: tool0)
 
   Reference frame for frame jogging. You can specify valid frame name
   such as `base_link`, `tool0` and so on.
+
+- `launch_spacenav` (default: true) Launch spacenav_node.
+
+- `sub_topic` You can specify a the topic to listen to.
   
 Please check your spacemouse is available by launching twist.launch.
 
