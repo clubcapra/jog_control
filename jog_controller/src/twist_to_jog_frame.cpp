@@ -10,6 +10,7 @@
 #include "jog_msgs/ControllerStatus.h"
 #include "jog_msgs/GetTargetList.h"
 #include "jog_msgs/SetTarget.h"
+#include "jog_msgs/SetCollisionAvoidance.h"
 
 namespace jog_controller
 {
@@ -35,6 +36,7 @@ TwistToJogFrame::TwistToJogFrame()
   pnh.getParam("scale_linear", scale_linear_);
   pnh.getParam("scale_angular", scale_angular_);
   pnh.getParam("sub_topic", sub_topic_);
+  pnh.param("avoid_collisions", avoid_collisions_, true);
   pnh.getParam("controller_enabled", controller_enabled_);
   twist_sub_ = nh.subscribe(sub_topic_, 10, &TwistToJogFrame::twist_cb, this);
   ros::topic::waitForMessage<geometry_msgs::Twist>(sub_topic_);
@@ -103,8 +105,14 @@ void TwistToJogFrame::twist_cb(const geometry_msgs::TwistConstPtr &twist)
 
   arma::vec6 v_twist = arma::vec6({twist->linear.x, twist->linear.y, twist->linear.z, twist->angular.x, twist->angular.y, twist->angular.z});
 
+  if(rotate_axes_)
+  {
+    rotateAxes(v_twist);
+  }
+
   if(dominant_axis_mode_)
   {
+    scaleCommand(v_twist);
     if(hasDuplicate(v_twist))
     {
       v_twist.zeros(); //handling the edge case
@@ -112,15 +120,8 @@ void TwistToJogFrame::twist_cb(const geometry_msgs::TwistConstPtr &twist)
       keepOnlyDominantAxis(v_twist);
     }
   }
-  
-  if(rotate_axes_)
-  {
-    rotateAxes(v_twist);
-  }
 
-  scaleCommand(v_twist);
-
-  msg.avoid_collisions = true;
+  msg.avoid_collisions = avoid_collisions_;
 
   // Publish if the button is enabled
   if(controller_enabled_)
@@ -163,6 +164,12 @@ bool TwistToJogFrame::setTargetFrame(jog_msgs::SetTargetRequest &target_frame, j
 bool TwistToJogFrame::setTargetLink(jog_msgs::SetTargetRequest &target_link, jog_msgs::SetTargetResponse &res)
 {
   link_name_ = target_link.name;
+  return true;
+}
+
+bool TwistToJogFrame::setCollisionAvoidance(jog_msgs::SetCollisionAvoidanceRequest &req, jog_msgs::SetCollisionAvoidanceResponse &res)
+{
+  avoid_collisions_ = req.status;
   return true;
 }
 

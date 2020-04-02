@@ -18,6 +18,7 @@ add_service_files(
   ControllerStatus.srv
   GetTargetList.srv
   SetTarget.srv
+  SetCollisionAvoidance.srv
 )
 
 generate_messages(

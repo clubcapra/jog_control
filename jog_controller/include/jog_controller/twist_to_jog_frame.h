@@ -12,6 +12,7 @@
 #include "jog_msgs/ControllerStatus.h"
 #include "jog_msgs/GetTargetList.h"
 #include "jog_msgs/SetTarget.h"
+#include "jog_msgs/SetCollisionAvoidance.h"
 
 namespace jog_controller
 {
@@ -35,13 +36,14 @@ class TwistToJogFrame
     bool setControllerStatus(jog_msgs::ControllerStatusRequest &req, jog_msgs::ControllerStatusResponse &res);
     bool setTargetFrame(jog_msgs::SetTargetRequest &target_frame, jog_msgs::SetTargetResponse &res);
     bool setTargetLink(jog_msgs::SetTargetRequest &target_link, jog_msgs::SetTargetResponse &res);
+    bool setCollisionAvoidance(jog_msgs::SetCollisionAvoidanceRequest &req, jog_msgs::SetCollisionAvoidanceResponse &res);
 
     //Member variables
     std::vector<std::string> group_names_, link_names_;
     std::string group_name_, link_name_, frame_id_, sub_topic_;
     double scale_linear_, scale_angular_;
     boost::mutex mutex_;
-    bool rotate_axes_, dominant_axis_mode_, controller_enabled_;
+    bool rotate_axes_, dominant_axis_mode_, controller_enabled_, avoid_collisions_;
     arma::mat rotation_matrix_;
 
     //Member methods
