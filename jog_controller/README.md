@@ -320,7 +320,7 @@ and check your sticks produce desired message.
 ### SpaceMouse
 
 `twist.launch` is the launch file to bringup spacenav_node
-and the converter node (TwistToJogFrame.cpp). This launch file has the
+and the converter node (twist_to_jog_frame.cpp). This launch file has the
 following arguments.
 
 - `joy_config` (default: spacemouse_twist)
