@@ -16,7 +16,8 @@ find_package(catkin REQUIRED COMPONENTS
   rviz
 )
 
-find_package(Boost REQUIRED system filesystem date_time thread)
+find_package(Boost REQUIRED system filesystem date_time thread )
+find_package(Armadillo REQUIRED)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -37,6 +38,7 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${ARMADILLO_INCLUDE_DIRS}
 )
 
 if(rviz_QT_VERSION VERSION_LESS "5")
@@ -86,13 +88,17 @@ add_executable(jog_joint_node src/jog_joint_node.cpp)
 target_link_libraries(jog_joint_node ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_dependencies(jog_joint_node jog_msgs_gencpp)
 
-install(TARGETS jog_frame_node jog_joint_node
+add_executable(twist_to_jog_frame src/twist_to_jog_frame.cpp)
+target_link_libraries(twist_to_jog_frame ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${ARMADILLO_LIBRARIES})
+add_dependencies(twist_to_jog_frame jog_msgs_gencpp)
+
+install(TARGETS jog_frame_node jog_joint_node twist_to_jog_frame
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-install(PROGRAMS script/joy_to_jog_frame.py script/joy_to_jog_joint.py script/twist_to_jog_frame.py
+install(PROGRAMS script/joy_to_jog_frame.py script/joy_to_jog_joint.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 install(FILES plugin_description.xml

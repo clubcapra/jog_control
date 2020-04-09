@@ -13,6 +13,14 @@ add_message_files(
   JogJoint.msg
   )
 
+add_service_files(
+  FILES
+  ControllerStatus.srv
+  GetTargetList.srv
+  SetTarget.srv
+  SetCollisionAvoidance.srv
+)
+
 generate_messages(
   DEPENDENCIES
   std_msgs
