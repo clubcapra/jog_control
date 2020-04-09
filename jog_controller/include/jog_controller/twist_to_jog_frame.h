@@ -31,7 +31,7 @@ class TwistToJogFrame
     ros::ServiceServer set_target_link_srv_;
     
     //ROS Subscriber and Service callback
-    void twist_cb(const geometry_msgs::TwistConstPtr &twist);
+    void twistCallback(const geometry_msgs::TwistConstPtr &twist);
     bool getTargetFrameList(jog_msgs::GetTargetListRequest &req, jog_msgs::GetTargetListResponse &res);
     bool setControllerStatus(jog_msgs::ControllerStatusRequest &req, jog_msgs::ControllerStatusResponse &res);
     bool setTargetFrame(jog_msgs::SetTargetRequest &target_frame, jog_msgs::SetTargetResponse &res);

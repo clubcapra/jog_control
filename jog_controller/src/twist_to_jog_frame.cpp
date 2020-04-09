@@ -38,7 +38,7 @@ TwistToJogFrame::TwistToJogFrame()
   pnh.getParam("sub_topic", sub_topic_);
   pnh.param("avoid_collisions", avoid_collisions_, true);
   pnh.getParam("controller_enabled", controller_enabled_);
-  twist_sub_ = nh.subscribe(sub_topic_, 10, &TwistToJogFrame::twist_cb, this);
+  twist_sub_ = nh.subscribe(sub_topic_, 10, &TwistToJogFrame::twistCallback, this);
   ros::topic::waitForMessage<geometry_msgs::Twist>(sub_topic_);
 }
 
@@ -84,15 +84,14 @@ void TwistToJogFrame::scaleCommand(arma::vec6 &twist_p)
 {
   for(arma::uword i = 0; i < 3; i++)
   {
-    twist_p.at(i) = twist_p.at(i) * scale_linear_;
-  }
-  for(arma::uword i = 3; i < 6; i++)
-  {
-    twist_p.at(i) = twist_p.at(i) * scale_angular_;
+    // x,y,z
+    twist_p.at(i) = twist_p.at(i) * scale_linear_; 
+    // rx,ry,rz
+    twist_p.at(i+3) = twist_p.at(i+3) * scale_angular_;
   }
 }
 
-void TwistToJogFrame::twist_cb(const geometry_msgs::TwistConstPtr &twist)
+void TwistToJogFrame::twistCallback(const geometry_msgs::TwistConstPtr &twist)
 {
   boost::mutex::scoped_lock lock(mutex_);
 
@@ -110,9 +109,10 @@ void TwistToJogFrame::twist_cb(const geometry_msgs::TwistConstPtr &twist)
     rotateAxes(v_twist);
   }
 
+  scaleCommand(v_twist);
+
   if(dominant_axis_mode_)
   {
-    scaleCommand(v_twist);
     if(hasDuplicate(v_twist))
     {
       v_twist.zeros(); //handling the edge case
@@ -123,24 +123,20 @@ void TwistToJogFrame::twist_cb(const geometry_msgs::TwistConstPtr &twist)
 
   msg.avoid_collisions = avoid_collisions_;
 
-  // Publish if the button is enabled
-  if(controller_enabled_)
+  // Publish if the button is enabled and if at least one of the commands is different from zero.
+  if(controller_enabled_ && arma::any(v_twist))
   {
-    // Publish only if at least one of the commands is different from zero.
-    if(arma::any(v_twist))
-    {
-      //Adding linear and angular values to the msg.
-      msg.linear_delta.x = v_twist.at(0);
-      msg.linear_delta.y = v_twist.at(1);
-      msg.linear_delta.z = v_twist.at(2);
-      msg.angular_delta.x = v_twist.at(3);
-      msg.angular_delta.y = v_twist.at(4);
-      msg.angular_delta.z = v_twist.at(5);
+    //Adding linear and angular values to the msg.
+    msg.linear_delta.x = v_twist.at(0);
+    msg.linear_delta.y = v_twist.at(1);
+    msg.linear_delta.z = v_twist.at(2);
+    msg.angular_delta.x = v_twist.at(3);
+    msg.angular_delta.y = v_twist.at(4);
+    msg.angular_delta.z = v_twist.at(5);
 
-      jog_frame_pub_.publish(msg);
-    }
+    jog_frame_pub_.publish(msg);
   }  
-  }  
+}  
 
 bool TwistToJogFrame::getTargetFrameList(jog_msgs::GetTargetListRequest &req, jog_msgs::GetTargetListResponse &res)
 {
@@ -148,7 +144,7 @@ bool TwistToJogFrame::getTargetFrameList(jog_msgs::GetTargetListRequest &req, jo
   return true;
 }
 
-// //callback for controller_enable service
+//callback for controller_enable service
 bool TwistToJogFrame::setControllerStatus(jog_msgs::ControllerStatusRequest &req, jog_msgs::ControllerStatusResponse &res)
 {
   controller_enabled_ = req.status;
